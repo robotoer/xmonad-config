@@ -8,8 +8,8 @@ import XMonad.Util.EZConfig
 import qualified XMonad.StackSet as W
 
 screenKeys = [
-  (xK_w, 0),
-  (xK_e, 1),
+  (xK_w, 1),
+  (xK_e, 0),
   (xK_r, 2) ]
 
 main =
@@ -21,6 +21,10 @@ main =
     -- Application shortcuts
     ((mod4Mask, xK_c), spawn "google-chrome"),
     ((mod4Mask, xK_v), spawn "google-chrome --incognito"),
+
+    -- Volumne shortcuts
+    ((mod4Mask, xK_Up), spawn "/home/robert/bin/volume up"),
+    ((mod4Mask, xK_Down), spawn "/home/robert/bin/volume down"),
 
     -- Config for gridview
     ((mod4Mask, xK_g), goToSelected defaultGSConfig),
