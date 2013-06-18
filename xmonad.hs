@@ -1,47 +1,53 @@
 import XMonad
-import XMonad.Actions.CycleWS
-import XMonad.Actions.GridSelect
-import XMonad.Actions.PhysicalScreens
+import XMonad.Actions.Volume
 import XMonad.Config.Gnome
+import XMonad.Hooks.EwmhDesktops
+import XMonad.Hooks.SetWMName
 import XMonad.Util.EZConfig
 
-import qualified XMonad.StackSet as W
+-- Custom hotkeys.
+customKeysP =
+    [
+      -- Application shortcuts.
+      ("M-c", spawn "google-chrome --profile-directory=Default"),
+      ("M-x", spawn "google-chrome --profile-directory=\"Profile 1\""),
+      ("M-S-x", spawn "google-chrome --incognito"),
+      ("M-a", spawn "hipchat"),
+      ("M-v", spawn "spotify"),
+      ("M-z", spawn "gvim ~/.xmonad/xmonad.hs"),
 
-screenKeys = [
-  (xK_w, 1),
-  (xK_e, 0),
-  (xK_r, 2) ]
+      -- Volume shortcuts. These require that 'xmonad-extras' is installed.
+      ("M-<Up>", raiseVolume 3 >> return ()),
+      ("M-<Down>", lowerVolume 3 >> return ())
+    ]
 
-main =
-  xmonad $ gnomeConfig {
-    terminal = "urxvt",
-    modMask = mod4Mask
-  }
-  `additionalKeys` ([
-    -- Application shortcuts
-    ((mod4Mask, xK_c), spawn "google-chrome"),
-    ((mod4Mask, xK_v), spawn "google-chrome --incognito"),
+-- Key unbindings.
+customUnkeysP =
+    [
+      -- default
+      --   run program launcher.
+      -- reason
+      --   kupfer handles its own keys.
+      "M-p"
+    ]
 
-    -- Volumne shortcuts
-    ((mod4Mask, xK_Up), spawn "/home/robert/bin/volume up"),
-    ((mod4Mask, xK_Down), spawn "/home/robert/bin/volume down"),
+-- Custom settings overriding defaults from 'gnomeConfig'.
+customConfig = gnomeConfig
+    {
+      -- Switch from using <Ctrl> as the window manager key to <Super> (also known as the
+      -- windows key).
+      modMask = mod4Mask,
 
-    -- Config for gridview
-    ((mod4Mask, xK_g), goToSelected defaultGSConfig),
+      -- Switch to using terminator as the default terminal emulator.
+      terminal = "terminator",
 
-    -- Setup better Xinerama bindings for switching between screens.
-    ((mod4Mask, xK_a), onPrevNeighbour W.view),
-    ((mod4Mask, xK_o), onNextNeighbour W.view),
-    ((mod4Mask .|. shiftMask, xK_a), onPrevNeighbour W.shift),
-    ((mod4Mask .|. shiftMask, xK_o), onNextNeighbour W.shift),
+      -- Fix for chrome + fullscreen
+      -- (https://wiki.archlinux.org/index.php/Xmonad#Chromium.2FChrome_will_not_go_fullscreen).
+      handleEventHook = fullscreenEventHook,
 
-    -- Setup cycling through workspaces.
-    ((mod4Mask, xK_Right), nextWS),
-    ((mod4Mask, xK_Left), prevWS),
-    ((mod4Mask .|. shiftMask, xK_Right), shiftToNext),
-    ((mod4Mask .|. shiftMask, xK_Left), shiftToPrev)
-  ] ++ [
-    ((m .|. mod4Mask, key), screenWorkspace sc >>= flip whenJust (windows . f)) -- Replace 'mod1Mask' with your mod key of choice.
-        | (key, sc) <- screenKeys
-        , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]
-  ])
+      -- Fix for java swing applications.
+      startupHook = setWMName "LG3D"
+    }
+
+-- Start XMonad.
+main = (xmonad (additionalKeysP (removeKeysP customConfig customUnkeysP) customKeysP))
