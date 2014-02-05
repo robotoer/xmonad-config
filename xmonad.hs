@@ -19,6 +19,7 @@ customKeysP =
       ("M-v", spawn "spotify"),
       ("M-z", spawn "gvim ~/.xmonad/xmonad.hs"),
       ("M-i", spawn "/home/robert/lib/idea/bin/idea.sh"),
+      ("M-S-i", spawn "/home/robert/lib/webstorm/bin/webstorm.sh"),
 
       -- Volume shortcuts. These require that 'xmonad-extras' is installed.
       ("M-<Up>", raiseVolume 3 >> return ()),
